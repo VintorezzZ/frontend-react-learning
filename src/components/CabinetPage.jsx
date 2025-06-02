@@ -9,7 +9,7 @@ function CabinetPage () {
 
     const handleFinish = async (values) => {
         const books = values.books || [];
-
+        
         if (books.length === 0) {
             showMessage(MessageType.Warning, 'Добавьте хотя бы одну книгу', messageApi);
             return;
@@ -18,6 +18,8 @@ function CabinetPage () {
         try {
             const result = await ApiService.saveBooks(books);
             
+            console.log("response status: ", result.status)
+
             if (result.status === 'success') {
                 showMessage(MessageType.Success, result.message, messageApi);
                 form.resetFields();
