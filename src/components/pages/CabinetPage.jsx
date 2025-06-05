@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Form, Input, Button, Space, message } from 'antd';
-import ApiService from '../ApiService';
-import { MessageType, showMessage } from '../Utils/messageUtils';
+import ApiService from '../../services/ApiService';
+import { MessageType, showMessage } from '../../utils/messageUtils.ts';
 
 function CabinetPage () {
     const [form] = Form.useForm();

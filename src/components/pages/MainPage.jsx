@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, List, message, Table } from 'antd';
-import ApiService from '../ApiService';
-import { MessageType, showMessage } from '../Utils/messageUtils';
+import ApiService from '../../services/ApiService';
+import { MessageType, showMessage } from '../../utils/messageUtils.ts';
 
 function MainPage() {
     const [books, setBooks] = useState([]);
@@ -14,7 +14,7 @@ function MainPage() {
             title: 'Название',
             dataIndex: 'title',
             key: 'title',
-            width: 300,      // фиксированная ширина в пикселях
+            width: 300,
             ellipsis: true,  // обрезать текст с многоточием, если не помещается
         },
         {
@@ -67,24 +67,12 @@ function MainPage() {
 
             {myMessage}
 
-            {/* Рендерим список книг только если нет ошибки и есть книги */}
-            {/*books.length > 0 && (
-                <List bordered dataSource={books} renderItem={(book) => (
-                    <List.Item>
-                        <List.Item.Meta
-                            title={book.getTitle()}
-                            description={`Автор: ${book.getId()}`}
-                        />
-                    </List.Item>
-                )}
-                />
-            )*/}
             {books.length > 0 && (
                 <Table
                     columns={columns}
                     dataSource={dataSource}
-                    pagination={{ pageSize: 10 }} // например, по 10 записей на странице
-                    scroll={{ x: 500 }}           // чтобы таблица горизонтально прокручивалась при необходимости
+                    pagination={{ pageSize: 10 }}
+                    scroll={{ x: 500 }}  // чтобы таблица горизонтально прокручивалась при необходимости
                 />
             )}
         </div>
