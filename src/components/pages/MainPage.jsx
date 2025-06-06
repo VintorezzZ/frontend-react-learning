@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Button, List, message, Table } from 'antd';
+import React, {useState} from 'react';
+import {Button, List, message, Table} from 'antd';
 import ApiService from '../../services/ApiService';
-import { MessageType, showMessage } from '../../utils/messageUtils.ts';
+import {MessageType, showMessage} from '../../utils/messageUtils.ts';
 
 function MainPage() {
     const [books, setBooks] = useState([]);
@@ -51,7 +51,7 @@ function MainPage() {
     // Вынесенная логика определения, что отображать под кнопкой
     let myMessage;
     if (errorMsg) {
-        myMessage = <p style={{ color: 'red' }}>{errorMsg}</p>;
+        myMessage = <p style={{color: 'red'}}>{errorMsg}</p>;
     } else if (books.length === 0) {
         myMessage = <p>Книг пока нет. Нажмите кнопку для загрузки.</p>;
     } else {
@@ -61,7 +61,7 @@ function MainPage() {
     return (
         <div>
             {contextHolder}
-            <Button type="primary" onClick={loadBooks} loading={loading} style={{ marginBottom: '16px' }}>
+            <Button type="primary" onClick={loadBooks} loading={loading} style={{marginBottom: '16px'}}>
                 Загрузить книги
             </Button>
 
@@ -71,8 +71,8 @@ function MainPage() {
                 <Table
                     columns={columns}
                     dataSource={dataSource}
-                    pagination={{ pageSize: 10 }}
-                    scroll={{ x: 500 }}  // чтобы таблица горизонтально прокручивалась при необходимости
+                    pagination={{pageSize: 10}}
+                    scroll={{x: 500}}  // чтобы таблица горизонтально прокручивалась при необходимости
                 />
             )}
         </div>

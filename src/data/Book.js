@@ -1,23 +1,23 @@
 export default class Book {
-  title;
-  author;
-  id;
+    title;
+    author;
+    id;
 
-  constructor({ title, author, id }) {
-    this.title = title;
-    this.author = author;
-    this.id = id;
-  }
+    constructor({title, author, id}) {
+        this.title = title;
+        this.author = author;
+        this.id = id;
+    }
 
-  getTitle() {
-    return `${this.title}`;
-  }
+    getTitle() {
+        return `${this.title}`;
+    }
 
-  getAuthorName() {
-    return `${this.author}`;
-  }
+    getAuthorName() {
+        return `${this.author}`;
+    }
 
-  getId() {
-    return `${this.id}`;
-  }
+    getId() {
+        return `${this.id}`;
+    }
 }

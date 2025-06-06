@@ -1,15 +1,15 @@
 import React from 'react';
-import { Form, Input, Button, Space, message } from 'antd';
+import {Form, Input, Button, Space, message} from 'antd';
 import ApiService from '../../services/ApiService';
-import { MessageType, showMessage } from '../../utils/messageUtils.ts';
+import {MessageType, showMessage} from '../../utils/messageUtils.ts';
 
-function CabinetPage () {
+function CabinetPage() {
     const [form] = Form.useForm();
     const [messageApi, contextHolder] = message.useMessage();
 
     const handleFinish = async (values) => {
         const books = values.books || [];
-        
+
         if (books.length === 0) {
             showMessage(MessageType.Warning, 'Добавьте хотя бы одну книгу', messageApi);
             return;
@@ -17,7 +17,7 @@ function CabinetPage () {
 
         try {
             const result = await ApiService.saveBooks(books);
-            
+
             console.log("response status: ", result.status)
 
             if (result.status === 'success') {
@@ -32,7 +32,7 @@ function CabinetPage () {
     };
 
     return (
-        <div style={{ maxWidth: 600, margin: '0 auto' }}>
+        <div style={{maxWidth: 600, margin: '0 auto'}}>
             {contextHolder}
             <h2>Добавить книги</h2>
             <Form
@@ -40,26 +40,26 @@ function CabinetPage () {
                 name="books"
                 onFinish={handleFinish}
                 autoComplete="off"
-                initialValues={{ books: [{ key: Date.now() }] }}
+                initialValues={{books: [{key: Date.now()}]}}
             >
                 <Form.List name="books">
-                    {(fields, { add, remove }) => (
+                    {(fields, {add, remove}) => (
                         <>
-                            {fields.map(({ key, name, ...restField }) => (
-                                <Space key={key} align="baseline" style={{ display: 'flex', marginBottom: 8 }}>
+                            {fields.map(({key, name, ...restField}) => (
+                                <Space key={key} align="baseline" style={{display: 'flex', marginBottom: 8}}>
                                     <Form.Item
                                         {...restField}
                                         name={[name, 'title']}
-                                        rules={[{ required: true, message: 'Введите название книги' }]}
+                                        rules={[{required: true, message: 'Введите название книги'}]}
                                     >
-                                        <Input placeholder="Название книги" />
+                                        <Input placeholder="Название книги"/>
                                     </Form.Item>
                                     <Form.Item
                                         {...restField}
                                         name={[name, 'author']}
-                                        rules={[{ required: true, message: 'Введите автора' }]}
+                                        rules={[{required: true, message: 'Введите автора'}]}
                                     >
-                                        <Input placeholder="Автор" />
+                                        <Input placeholder="Автор"/>
                                     </Form.Item>
                                     <Button
                                         type="link"
