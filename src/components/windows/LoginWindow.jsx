@@ -30,8 +30,8 @@ function LoginModal({visible, onClose, onLogin, onRegister}) {
             >
                 <Form form={form} onFinish={isRegistering ? handleFinishRegister : handleFinishLogin}>
                     <Form.Item
-                        name="username"
-                        rules={[{required: true, message: 'Пожалуйста, введите ваше имя пользователя'}]}
+                        name="login"
+                        rules={[{required: true, message: 'Пожалуйста, введите ваш логин'}]}
                     >
                         <Input placeholder="Имя пользователя"/>
                     </Form.Item>

@@ -116,4 +116,23 @@ export default class ApiService {
         console.log(payload);
         return payload;
     }
+
+    // data - структура с полями {username: string, password: string}
+    static async deleteAccount() {
+        const response = await fetch('http://localhost:80/index.php/auth/delete', {
+            method: 'POST',
+            credentials: 'include'
+        });
+
+        console.log("responce OK: ", response.ok);
+
+        if (!response.ok) {
+            console.warn(`Ошибка delete: ${response.statusText}`);
+        }
+
+        let body = await response.json();
+        let payload = body['result'];
+        console.log(payload);
+        return payload;
+    }
 }

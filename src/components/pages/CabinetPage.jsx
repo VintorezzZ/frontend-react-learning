@@ -2,10 +2,12 @@ import React from 'react';
 import {Form, Input, Button, Space, message} from 'antd';
 import ApiService from '../../services/ApiService';
 import {MessageType, showMessage} from '../../utils/messageUtils.ts';
+import {useNavigate} from 'react-router-dom';
 
 function CabinetPage() {
     const [form] = Form.useForm();
     const [messageApi, contextHolder] = message.useMessage();
+    const navigate = useNavigate();
 
     const handleFinish = async (values) => {
         const books = values.books || [];
@@ -18,16 +20,38 @@ function CabinetPage() {
         try {
             const result = await ApiService.saveBooks(books);
 
-            console.log("response status: ", result.status)
+            console.log("response status: ", result.error)
 
-            if (result.status === 'success') {
+            if (result.error === 0) {
                 showMessage(MessageType.Success, result.message, messageApi);
                 form.resetFields();
             } else {
-                showMessage(MessageType.error, result.message, messageApi);
+                showMessage(MessageType.Error, result.message, messageApi);
             }
         } catch (error) {
             showMessage(MessageType.Error, 'Ошибка при отправке данных', messageApi);
+        }
+    };
+
+    const handleDeleteAccount = async () => {
+        const confirmDelete = window.confirm("Вы уверены, что хотите удалить ваш аккаунт? Это действие необратимо.");
+
+        if (!confirmDelete)
+            return;
+
+        try {
+            const result = await ApiService.deleteAccount(); // Замените на ваш метод API
+            console.log("response status: ", result.error);
+
+            if (result.error === 0) {
+                showMessage(MessageType.Success, 'Аккаунт успешно удалён.', messageApi);
+                //navigate('/'); // Перенаправление на главную страницу
+                window.location.href = '/';
+            } else {
+                showMessage(MessageType.Error, result.message, messageApi);
+            }
+        } catch (error) {
+            showMessage(MessageType.Error, 'Ошибка при удалении аккаунта', messageApi);
         }
     };
 
@@ -88,8 +112,13 @@ function CabinetPage() {
                     </Button>
                 </Form.Item>
             </Form>
+
+            {/* Кнопка для удаления аккаунта */}
+            <Button type="danger" onClick={handleDeleteAccount} block style={{ marginTop: '16px' }}>
+                Удалить аккаунт
+            </Button>
         </div>
     );
-};
+}
 
 export default CabinetPage;

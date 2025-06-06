@@ -25,10 +25,11 @@ function AppUI() {
                 showMessage(MessageType.Success, 'Успешная сессия!', messageApi);
                 setIsLoginWindowVisible(false);
             } else {
+                //window.location.href = '/';
                 console.log('Not authorized:', result.message);
                 showMessage(MessageType.Error, result.message, messageApi);
             }
-        };
+        }
 
         handleSession();
 
@@ -38,7 +39,7 @@ function AppUI() {
     const handleLogin = async (credentials) => {
         let result = await ApiService.login(credentials);
 
-        if (result.error == 0) {
+        if (result.error === 0) {
             setIsAuthorized(true);
             showMessage(MessageType.Success, 'Успешная авторизация!', messageApi);
             setIsLoginWindowVisible(false);
@@ -53,10 +54,11 @@ function AppUI() {
 
         let result = await ApiService.register(credentials);
 
-        if (result.error == 0) {
+        if (result.error === 0) {
             setIsAuthorized(true);
             showMessage(MessageType.Success, 'Успешная регистрация!', messageApi);
             setIsLoginWindowVisible(false);
+            window.location.href = '/components/pages/CabinetPage.jsx';
         } else {
             showMessage(MessageType.Error, result.message, messageApi);
         }
@@ -65,7 +67,7 @@ function AppUI() {
     const handleLogout = async () => {
         let result = await ApiService.logout();
 
-        if (result.error == 0) {
+        if (result.error === 0) {
             setIsAuthorized(false);
             showMessage(MessageType.Success, 'Вы вышли из системы.', messageApi);
 
