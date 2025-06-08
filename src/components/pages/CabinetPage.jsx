@@ -1,37 +1,31 @@
-import React from 'react';
-import {Form, Input, Button, Space, message} from 'antd';
+import React, {useState, useEffect} from 'react';
+import {Form, Input, Button, message, Row, Col, Typography} from 'antd';
 import ApiService from '../../services/ApiService';
 import {MessageType, showMessage} from '../../utils/messageUtils.ts';
-import {useNavigate} from 'react-router-dom';
 
 function CabinetPage() {
-    const [form] = Form.useForm();
     const [messageApi, contextHolder] = message.useMessage();
-    const navigate = useNavigate();
+    const [username, setUsername] = useState('');  // Состояние для имени пользователя
+    const [initialUsername, setInitialUsername] = useState(''); // Для хранения начального значения имени
+    const [isEditing, setIsEditing] = useState(false); // Состояние для редактирования
+    const [loading, setLoading] = useState(false); // Состояние для загрузки при операции
+    const {Title} = Typography;
 
-    const handleFinish = async (values) => {
-        const books = values.books || [];
-
-        if (books.length === 0) {
-            showMessage(MessageType.Warning, 'Добавьте хотя бы одну книгу', messageApi);
-            return;
-        }
-
-        try {
-            const result = await ApiService.saveBooks(books);
-
-            console.log("response status: ", result.error)
-
+    useEffect(() => {
+        // Загрузка текущего имени пользователя с бэкенда
+        const fetchUserProfile = async () => {
+            const result = await ApiService.getUserProfile(); // Получите метод для получения профиля
             if (result.error === 0) {
-                showMessage(MessageType.Success, result.message, messageApi);
-                form.resetFields();
+                showMessage(MessageType.Success, 'Успешно получен профиль', messageApi)
+                setUsername(result.profile.username); // Предполагается, что результат содержит ключ `username`
+                setInitialUsername(result.profile.username); // Сохраняем начальное имя
             } else {
                 showMessage(MessageType.Error, result.message, messageApi);
             }
-        } catch (error) {
-            showMessage(MessageType.Error, 'Ошибка при отправке данных', messageApi);
-        }
-    };
+        };
+
+        fetchUserProfile();
+    }, []);
 
     const handleDeleteAccount = async () => {
         const confirmDelete = window.confirm("Вы уверены, что хотите удалить ваш аккаунт? Это действие необратимо.");
@@ -40,85 +34,100 @@ function CabinetPage() {
             return;
 
         try {
+            setLoading(true);
             const result = await ApiService.deleteAccount(); // Замените на ваш метод API
             console.log("response status: ", result.error);
 
             if (result.error === 0) {
                 showMessage(MessageType.Success, 'Аккаунт успешно удалён.', messageApi);
-                //navigate('/'); // Перенаправление на главную страницу
                 window.location.href = '/';
             } else {
                 showMessage(MessageType.Error, result.message, messageApi);
             }
+            setLoading(false);
         } catch (error) {
+            setLoading(false);
             showMessage(MessageType.Error, 'Ошибка при удалении аккаунта', messageApi);
         }
     };
 
-    return (
-        <div style={{maxWidth: 600, margin: '0 auto'}}>
-            {contextHolder}
-            <h2>Добавить книги</h2>
-            <Form
-                form={form}
-                name="books"
-                onFinish={handleFinish}
-                autoComplete="off"
-                initialValues={{books: [{key: Date.now()}]}}
-            >
-                <Form.List name="books">
-                    {(fields, {add, remove}) => (
-                        <>
-                            {fields.map(({key, name, ...restField}) => (
-                                <Space key={key} align="baseline" style={{display: 'flex', marginBottom: 8}}>
-                                    <Form.Item
-                                        {...restField}
-                                        name={[name, 'title']}
-                                        rules={[{required: true, message: 'Введите название книги'}]}
-                                    >
-                                        <Input placeholder="Название книги"/>
-                                    </Form.Item>
-                                    <Form.Item
-                                        {...restField}
-                                        name={[name, 'author']}
-                                        rules={[{required: true, message: 'Введите автора'}]}
-                                    >
-                                        <Input placeholder="Автор"/>
-                                    </Form.Item>
-                                    <Button
-                                        type="link"
-                                        danger
-                                        onClick={() => remove(name)}
-                                    >
-                                        Удалить
-                                    </Button>
-                                </Space>
-                            ))}
-                            <Form.Item>
-                                <Button
-                                    type="dashed"
-                                    onClick={() => add()}
-                                    block
-                                >
-                                    Добавить книгу
-                                </Button>
-                            </Form.Item>
-                        </>
-                    )}
-                </Form.List>
-                <Form.Item>
-                    <Button type="primary" htmlType="submit" block>
-                        Отправить книги
-                    </Button>
-                </Form.Item>
-            </Form>
+    const handleUpdateUsername = async (values) => {
 
-            {/* Кнопка для удаления аккаунта */}
-            <Button type="danger" onClick={handleDeleteAccount} block style={{ marginTop: '16px' }}>
+        try {
+            setLoading(true);
+
+            const data = { username: username };
+            const result = await ApiService.updateUsername(data);
+
+            setLoading(false);
+            setIsEditing(false);
+
+            if (result.error === 0) {
+                showMessage(MessageType.Success, 'Имя пользователя успешно обновлено.', messageApi);
+                setUsername(username); // Обновите состояние с новым именем
+            } else {
+                showMessage(MessageType.Error, result.message, messageApi);
+            }
+        } catch (error) {
+            setLoading(false);
+            showMessage(MessageType.Error, "Error update username", messageApi);
+        }
+
+    };
+
+    // Функция для обработки отмены
+    const handleCancelEdit = () => {
+        setUsername(initialUsername); // Возвращаем имя пользователя к начальному значению
+        setIsEditing(false); // Завершаем режим редактирования
+    };
+
+
+    return (
+        <div style={{padding: '20px'}}>
+            {contextHolder}
+            <Title level={2}>Профиль</Title>
+            <div style={{marginBottom: '20px'}}>
+                <Row align="middle" gutter={16}>
+                    <Col>
+                        <span style={{fontWeight: 'bold'}}>Имя пользователя:</span>
+                    </Col>
+                    <Col>
+                        {isEditing ? (
+                            <Input
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)} // Обновление состояния при вводе
+                            />
+                        ) : (
+                            <span>{username}</span>
+                        )}
+                    </Col>
+                    <Col>
+                        {isEditing ? (
+                            <>
+                                <Button type="primary" onClick={handleUpdateUsername} loading={loading}
+                                        style={{marginRight: '10px'}}>
+                                    Сохранить
+                                </Button>
+                                <Button onClick={handleCancelEdit}>
+                                    Отмена
+                                </Button>
+                            </>
+                        ) : (
+                            <Button type="link" onClick={() => {
+                                setInitialUsername(username); // Сохраняем текущее имя перед редактированием
+                                setIsEditing(true);
+                            }}>
+                                Редактировать
+                            </Button>
+                        )}
+                    </Col>
+                </Row>
+            </div>
+            <Button type="danger" onClick={handleDeleteAccount} loading={loading} style={{marginTop: '20px'}}>
                 Удалить аккаунт
             </Button>
         </div>
     );
-}
+};
 
 export default CabinetPage;

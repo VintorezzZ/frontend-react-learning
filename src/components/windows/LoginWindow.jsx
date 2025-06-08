@@ -43,6 +43,14 @@ function LoginModal({visible, onClose, onLogin, onRegister}) {
                     </Form.Item>
                     {isRegistering && (
                         <Form.Item
+                            name="username"
+                            rules={[{required: true, type: 'username', message: 'Пожалуйста, введите корректный username'}]}
+                        >
+                            <Input placeholder="Username"/>
+                        </Form.Item>
+                    )}
+                    {isRegistering && (
+                        <Form.Item
                             name="email"
                             rules={[{required: true, type: 'email', message: 'Пожалуйста, введите корректный email'}]}
                         >

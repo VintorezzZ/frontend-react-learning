@@ -7,6 +7,7 @@ import CabinetPage from './components/pages/CabinetPage';
 import LoginWindow from './components/windows/LoginWindow';
 import {MessageType, showMessage} from './utils/messageUtils.ts';
 import ApiService from './services/ApiService';
+import AddBooksPage from "./components/pages/AddBooksPage";
 
 const {Header, Content, Footer} = Layout;
 
@@ -19,7 +20,7 @@ function AppUI() {
         async function handleSession() {
             let result = await ApiService.checkSession();
 
-            if (result.error == false) {
+            if (result.error === 0) {
                 setIsAuthorized(true);
                 console.log('Authorized state set to true');
                 showMessage(MessageType.Success, 'Успешная сессия!', messageApi);
@@ -53,7 +54,7 @@ function AppUI() {
         console.log('Register data:', credentials);
 
         let result = await ApiService.register(credentials);
-
+console.log('result.error', result.error)
         if (result.error === 0) {
             setIsAuthorized(true);
             showMessage(MessageType.Success, 'Успешная регистрация!', messageApi);
@@ -88,12 +89,17 @@ function AppUI() {
                         <Menu.Item key="1">
                             <Link to="/">Главная</Link>
                         </Menu.Item>
-                        {isAuthorized && (  // Скрытие кнопки "Личный кабинет", если не авторизован
+                        {isAuthorized && (
                             <Menu.Item key="2">
-                                <Link to="/profile">Личный кабинет</Link>
+                                <Link to="/addBooksPage">Добавить книги</Link>
                             </Menu.Item>
                         )}
-                        <Menu.Item key="3">
+                        {isAuthorized && (
+                            <Menu.Item key="3">
+                                <Link to="/cabinetPage">Личный кабинет</Link>
+                            </Menu.Item>
+                        )}
+                        <Menu.Item key="4">
                             {isAuthorized ? (
                                 <Button type="link" onClick={handleLogout}>Выйти</Button>
                             ) : (
@@ -107,7 +113,8 @@ function AppUI() {
                 <Content style={{padding: '24px'}}>
                     <Routes>
                         <Route path="/" element={<MainPage/>}/>
-                        <Route path="/profile" element={<CabinetPage/>}/>
+                        <Route path="/addBooksPage" element={<AddBooksPage/>}/>
+                        <Route path="/cabinetPage" element={<CabinetPage/>}/>
                     </Routes>
                 </Content>
 

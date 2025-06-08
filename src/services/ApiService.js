@@ -135,4 +135,64 @@ export default class ApiService {
         console.log(payload);
         return payload;
     }
+
+    // data - структура с полями {username: string, password: string}
+    static async updateUsername(data) {
+        console.log('responce: ', JSON.stringify({data}))
+        const response = await fetch('http://localhost:80/index.php/profile/updateUsername', {
+            method: 'POST',
+            credentials: 'include',
+            body: JSON.stringify({data}),
+        });
+
+        console.log("responce OK: ", response.ok);
+
+        if (!response.ok) {
+            console.warn(`Ошибка update: ${response.statusText}`);
+        }
+
+        let body = await response.json();
+        let payload = body['result'];
+        console.log(payload);
+        return payload;
+    }
+
+    // data - структура с полями {username: string, password: string}
+    static async updateEmail(data) {
+        const response = await fetch('http://localhost:80/index.php/profile/updateEmail', {
+            method: 'POST',
+            credentials: 'include',
+            body: JSON.stringify({data}),
+        });
+
+        console.log("responce OK: ", response.ok);
+
+        if (!response.ok) {
+            console.warn(`Ошибка update: ${response.statusText}`);
+        }
+
+        let body = await response.json();
+        let payload = body['result'];
+        console.log(payload);
+        return payload;
+    }
+
+    // data - структура с полями {username: string, password: string}
+    static async getUserProfile() {
+        const response = await fetch('http://localhost:80/index.php/profile/getProfile', {
+            method: 'POST',
+            credentials: 'include',
+        });
+
+        console.log("responce OK: ", response.ok);
+
+        if (!response.ok) {
+            console.warn(`Ошибка get profile: ${response.statusText}`);
+        }
+
+        let body = await response.json();
+        let payload = body['result'];
+        console.log(payload);
+        return payload;
+    }
 }
