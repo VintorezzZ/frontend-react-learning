@@ -1,6 +1,14 @@
 import Book from '../data/Book';
 
 export default class ApiService {
+    static async sendRequest(url, method, data){
+        const response = await fetch('http://localhost:80/index.php/saveBooks', {
+            method: 'POST',
+            body: JSON.stringify({data}),
+            credentials: 'include',
+        });
+    }
+
     static async fetchBooks() {
         const response = await fetch('http://localhost:80/index.php/getBooks', {
             credentials: 'include'
@@ -19,11 +27,9 @@ export default class ApiService {
 
     // data - массив объектов {title: string, author: string}
     static async saveBooks(data) {
-        const response = await fetch('http://localhost:80/index.php/saveBooks', {
-            method: 'POST',
-            body: JSON.stringify({data}),
-            credentials: 'include',
-        });
+        const response = await this.sendRequest('http://localhost:80/index.php/saveBooks', 'POST', data)
+
+
 
         console.log("responce OK: ", response.ok);
 

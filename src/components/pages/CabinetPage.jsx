@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Form, Input, Button, message, Row, Col, Typography} from 'antd';
-import ApiService from '../../services/ApiService';
+import ApiService from '../../services/ApiService2.ts';
 import {MessageType, showMessage} from '../../utils/messageUtils.ts';
 
 function CabinetPage() {
@@ -12,15 +12,17 @@ function CabinetPage() {
     const {Title} = Typography;
 
     useEffect(() => {
-        // Загрузка текущего имени пользователя с бэкенда
         const fetchUserProfile = async () => {
-            const result = await ApiService.getUserProfile(); // Получите метод для получения профиля
-            if (result.error === 0) {
+            const response = await ApiService.getUserProfile(); // Получите метод для получения профиля
+
+            let profileUsername = response.data.result.profile.username;
+
+            if (response.data.result.error === 0) {
                 showMessage(MessageType.Success, 'Успешно получен профиль', messageApi)
-                setUsername(result.profile.username); // Предполагается, что результат содержит ключ `username`
-                setInitialUsername(result.profile.username); // Сохраняем начальное имя
+                setUsername(profileUsername);
+                setInitialUsername(profileUsername);
             } else {
-                showMessage(MessageType.Error, result.message, messageApi);
+                showMessage(MessageType.Error, response.statusText, messageApi);
             }
         };
 
@@ -35,14 +37,14 @@ function CabinetPage() {
 
         try {
             setLoading(true);
-            const result = await ApiService.deleteAccount(); // Замените на ваш метод API
-            console.log("response status: ", result.error);
+            const response = await ApiService.deleteAccount(); // Замените на ваш метод API
+            console.log("response status: ", response.status);
 
-            if (result.error === 0) {
+            if (response.data.result.error === 0) {
                 showMessage(MessageType.Success, 'Аккаунт успешно удалён.', messageApi);
                 window.location.href = '/';
             } else {
-                showMessage(MessageType.Error, result.message, messageApi);
+                showMessage(MessageType.Error, response.statusText, messageApi);
             }
             setLoading(false);
         } catch (error) {
@@ -56,17 +58,19 @@ function CabinetPage() {
         try {
             setLoading(true);
 
-            const data = { username: username };
-            const result = await ApiService.updateUsername(data);
+            const response = await ApiService.updateUsername(username);
+
+            console.log('res: ', response);
 
             setLoading(false);
             setIsEditing(false);
 
-            if (result.error === 0) {
+            if (response.data.result.error === 0) {
                 showMessage(MessageType.Success, 'Имя пользователя успешно обновлено.', messageApi);
-                setUsername(username); // Обновите состояние с новым именем
+                setUsername(username);
+                setInitialUsername(username)
             } else {
-                showMessage(MessageType.Error, result.message, messageApi);
+                showMessage(MessageType.Error, response.statusText, messageApi);
             }
         } catch (error) {
             setLoading(false);
@@ -80,7 +84,6 @@ function CabinetPage() {
         setUsername(initialUsername); // Возвращаем имя пользователя к начальному значению
         setIsEditing(false); // Завершаем режим редактирования
     };
-
 
     return (
         <div style={{padding: '20px'}}>

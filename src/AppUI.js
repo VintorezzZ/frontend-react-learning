@@ -6,7 +6,7 @@ import MainPage from './components/pages/MainPage';
 import CabinetPage from './components/pages/CabinetPage';
 import LoginWindow from './components/windows/LoginWindow';
 import {MessageType, showMessage} from './utils/messageUtils.ts';
-import ApiService from './services/ApiService';
+import ApiService from './services/ApiService2.ts';
 import AddBooksPage from "./components/pages/AddBooksPage";
 
 const {Header, Content, Footer} = Layout;
@@ -18,17 +18,17 @@ function AppUI() {
 
     useEffect(() => {
         async function handleSession() {
-            let result = await ApiService.checkSession();
+            let response = await ApiService.checkSession();
 
-            if (result.error === 0) {
+            if (response.data.result.error === 0) {
                 setIsAuthorized(true);
                 console.log('Authorized state set to true');
                 showMessage(MessageType.Success, 'Успешная сессия!', messageApi);
                 setIsLoginWindowVisible(false);
             } else {
                 //window.location.href = '/';
-                console.log('Not authorized:', result.message);
-                showMessage(MessageType.Error, result.message, messageApi);
+                console.log('Not authorized:', response.message);
+                showMessage(MessageType.Error, response.message, messageApi);
             }
         }
 
@@ -38,44 +38,46 @@ function AppUI() {
 
 
     const handleLogin = async (credentials) => {
-        let result = await ApiService.login(credentials);
+        let response = await ApiService.login(credentials.login, credentials.password);
 
-        if (result.error === 0) {
+        console.log('res: ', response);
+
+        if (response.data.result.error === 0) {
             setIsAuthorized(true);
             showMessage(MessageType.Success, 'Успешная авторизация!', messageApi);
             setIsLoginWindowVisible(false);
             window.location.href = '/';
         } else {
-            showMessage(MessageType.Error, result.message, messageApi);
+            showMessage(MessageType.Error, response.data.result.message, messageApi);
         }
     };
 
     const handleRegister = async (credentials) => {
         console.log('Register data:', credentials);
 
-        let result = await ApiService.register(credentials);
-console.log('result.error', result.error)
-        if (result.error === 0) {
+        let response = await ApiService.register(credentials.login, credentials.password, credentials.email, credentials.username);
+
+        if (response.data.result.error === 0) {
             setIsAuthorized(true);
             showMessage(MessageType.Success, 'Успешная регистрация!', messageApi);
             setIsLoginWindowVisible(false);
             window.location.href = '/components/pages/CabinetPage.jsx';
         } else {
-            showMessage(MessageType.Error, result.message, messageApi);
+            showMessage(MessageType.Error, response.message, messageApi);
         }
     };
 
     const handleLogout = async () => {
-        let result = await ApiService.logout();
+        let response = await ApiService.logout();
 
-        if (result.error === 0) {
+        if (response.data.result.error === 0) {
             setIsAuthorized(false);
             showMessage(MessageType.Success, 'Вы вышли из системы.', messageApi);
 
             setIsLoginWindowVisible(false);
             window.location.href = '/';
         } else {
-            showMessage(MessageType.Error, result.message, messageApi);
+            showMessage(MessageType.Error, response.message, messageApi);
         }
     };
 
