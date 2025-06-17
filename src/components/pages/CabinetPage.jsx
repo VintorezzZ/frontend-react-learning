@@ -37,7 +37,7 @@ function CabinetPage() {
 
         try {
             setLoading(true);
-            const response = await ApiService.deleteAccount(); // Замените на ваш метод API
+            const response = await ApiService.deleteAccount();
             console.log("response status: ", response.status);
 
             if (response.data.result.error === 0) {

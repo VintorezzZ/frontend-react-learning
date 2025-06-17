@@ -51,7 +51,7 @@ export default class ApiService2 {
 
     static async register(login: string, password: string, email: string, username: string): Promise<ApiResponse<string>> {
         const data = { login: login, password: password, email: email, username: username };
-        return await this.request<string>('/auth/register…', 'POST', data);
+        return await this.request<string>('/auth/register', 'POST', data);
     }
 
     static async login(login: string, password: string): Promise<ApiResponse<string>> {
